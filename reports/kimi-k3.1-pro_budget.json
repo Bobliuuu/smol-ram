@@ -1,0 +1,99 @@
+{
+ "src": "moonshotai/Kimi-K3.1-Pro",
+ "summary": {
+  "total_bytes": 1561217377280,
+  "by_role": {
+   "norm": {
+    "tensors": 884,
+    "bytes": 49632256,
+    "dtypes": {
+     "F32": 44160000,
+     "BF16": 5472256
+    }
+   },
+   "dense_mlp": {
+    "tensors": 3,
+    "bytes": 1453326336,
+    "dtypes": {
+     "BF16": 1453326336
+    }
+   },
+   "residual_mix": {
+    "tensors": 93,
+    "bytes": 1333248,
+    "dtypes": {
+     "BF16": 1333248
+    }
+   },
+   "attention": {
+    "tensors": 862,
+    "bytes": 72717799424,
+    "dtypes": {
+     "BF16": 72717799424
+    }
+   },
+   "router": {
+    "tensors": 184,
+    "bytes": 1182074880,
+    "dtypes": {
+     "F32": 329728,
+     "BF16": 1181745152
+    }
+   },
+   "moe_latent_proj": {
+    "tensors": 276,
+    "bytes": 9454620672,
+    "dtypes": {
+     "BF16": 9454620672
+    }
+   },
+   "shared_expert": {
+    "tensors": 276,
+    "bytes": 24310185984,
+    "dtypes": {
+     "BF16": 24310185984
+    }
+   },
+   "routed_expert": {
+    "tensors": 494592,
+    "bytes": 1446456066048,
+    "dtypes": {
+     "U8": 1446456066048
+    }
+   },
+   "lm_head": {
+    "tensors": 1,
+    "bytes": 2348810240,
+    "dtypes": {
+     "BF16": 2348810240
+    }
+   },
+   "embed": {
+    "tensors": 1,
+    "bytes": 2348810240,
+    "dtypes": {
+     "BF16": 2348810240
+    }
+   },
+   "vision": {
+    "tensors": 168,
+    "bytes": 894717952,
+    "dtypes": {
+     "BF16": 894717952
+    }
+   }
+  },
+  "moe": {
+   "num_experts": 896,
+   "top_k": 16,
+   "moe_layers": 92,
+   "bytes_per_expert": 17547264.0,
+   "routed_bytes": 1446456066048
+  },
+  "per_token": {
+   "always_active_bytes": 111517783040,
+   "active_routed_bytes": 25829572608.0,
+   "total_touched_bytes": 137347355648.0
+  }
+ }
+}
