@@ -1,0 +1,89 @@
+{
+ "src": "zai-org/GLM-5.3",
+ "summary": {
+  "total_bytes": 755617140416,
+  "by_role": {
+   "dense_mlp": {
+    "tensors": 18,
+    "bytes": 679643136,
+    "dtypes": {
+     "F32": 165888,
+     "F8_E4M3": 679477248
+    }
+   },
+   "attention": {
+    "tensors": 900,
+    "bytes": 13250293440,
+    "dtypes": {
+     "F32": 3239616,
+     "BF16": 8650752,
+     "F8_E4M3": 13238403072
+    }
+   },
+   "routed_expert": {
+    "tensors": 116736,
+    "bytes": 734618714112,
+    "dtypes": {
+     "F32": 179306496,
+     "F8_E4M3": 734439407616
+    }
+   },
+   "lm_head": {
+    "tensors": 1,
+    "bytes": 1903165440,
+    "dtypes": {
+     "BF16": 1903165440
+    }
+   },
+   "embed": {
+    "tensors": 1,
+    "bytes": 1903165440,
+    "dtypes": {
+     "BF16": 1903165440
+    }
+   },
+   "norm": {
+    "tensors": 364,
+    "bytes": 2406400,
+    "dtypes": {
+     "BF16": 2406400
+    }
+   },
+   "router": {
+    "tensors": 152,
+    "bytes": 239153152,
+    "dtypes": {
+     "F32": 77824,
+     "BF16": 239075328
+    }
+   },
+   "shared_expert": {
+    "tensors": 456,
+    "bytes": 2869604352,
+    "dtypes": {
+     "F32": 700416,
+     "F8_E4M3": 2868903936
+    }
+   },
+   "other": {
+    "tensors": 1,
+    "bytes": 150994944,
+    "dtypes": {
+     "BF16": 150994944
+    }
+   }
+  },
+  "moe": {
+   "num_experts": 256,
+   "top_k": 8,
+   "moe_layers": 76,
+   "bytes_per_expert": 37757952.0,
+   "routed_bytes": 734618714112
+  },
+  "per_token": {
+   "always_active_bytes": 19095260864,
+   "active_routed_bytes": 22956834816.0,
+   "total_touched_bytes": 42052095680.0
+  }
+ }
+}

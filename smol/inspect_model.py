@@ -31,8 +31,9 @@ ROLES = [
     ("shared_expert", r"shared_expert"),
     ("router", r"(\.gate\.(weight|e_score_correction_bias)$|\.router\.|gate\.bias$)"),
     ("moe_latent_proj", r"routed_expert_(up|down)_proj|routed_expert_norm"),
-    ("embed", r"embed_tokens|wte|word_embeddings"),
-    ("lm_head", r"lm_head|output\.weight$"),
+    # Row-lookup tables: a token touches only a few rows, so they are not "always active".
+    ("embed", r"embed_tokens|wte|word_embeddings|engram\.embed|(^|\.)embed\.(weight|scale)$"),
+    ("lm_head", r"lm_head|(^|\.)head\.weight$|output\.weight$"),
     ("norm", r"norm|A_log|dt_bias|conv1d|\.bias$"),
     ("attention", r"(self_attn|attention|attn)"),
     ("dense_mlp", r"\.mlp\."),

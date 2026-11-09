@@ -1,0 +1,84 @@
+{
+ "src": "Qwen/Qwen3.5-397B-A17B",
+ "summary": {
+  "total_bytes": 806795875168,
+  "by_role": {
+   "routed_expert": {
+    "tensors": 1656,
+    "bytes": 785979015168,
+    "dtypes": {
+     "BF16": 785979015168
+    }
+   },
+   "lm_head": {
+    "tensors": 1,
+    "bytes": 2034237440,
+    "dtypes": {
+     "BF16": 2034237440
+    }
+   },
+   "embed": {
+    "tensors": 1,
+    "bytes": 2034237440,
+    "dtypes": {
+     "BF16": 2034237440
+    }
+   },
+   "attention": {
+    "tensors": 289,
+    "bytes": 13972275200,
+    "dtypes": {
+     "BF16": 13972275200
+    }
+   },
+   "shared_expert": {
+    "tensors": 244,
+    "bytes": 1535614976,
+    "dtypes": {
+     "BF16": 1535614976
+    }
+   },
+   "vision": {
+    "tensors": 333,
+    "bytes": 912020960,
+    "dtypes": {
+     "BF16": 912020960
+    }
+   },
+   "other": {
+    "tensors": 1,
+    "bytes": 67108864,
+    "dtypes": {
+     "BF16": 67108864
+    }
+   },
+   "norm": {
+    "tensors": 338,
+    "bytes": 5512576,
+    "dtypes": {
+     "F32": 34560,
+     "BF16": 5478016
+    }
+   },
+   "router": {
+    "tensors": 61,
+    "bytes": 255852544,
+    "dtypes": {
+     "BF16": 255852544
+    }
+   }
+  },
+  "moe": {
+   "num_experts": 512,
+   "top_k": 10,
+   "moe_layers": 60,
+   "bytes_per_expert": 25585254.4,
+   "routed_bytes": 785979015168
+  },
+  "per_token": {
+   "always_active_bytes": 17870601600,
+   "active_routed_bytes": 15351152640.0,
+   "total_touched_bytes": 33221754240.0
+  }
+ }
+}

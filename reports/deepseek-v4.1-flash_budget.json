@@ -1,0 +1,94 @@
+{
+ "src": "deepseek-ai/DeepSeek-V4.1-Flash",
+ "summary": {
+  "total_bytes": 510286023000,
+  "by_role": {
+   "norm": {
+    "tensors": 315,
+    "bytes": 1488384,
+    "dtypes": {
+     "BF16": 1488384
+    }
+   },
+   "other": {
+    "tensors": 189,
+    "bytes": 626419236,
+    "dtypes": {
+     "BF16": 148210176,
+     "F32": 84609060,
+     "F8_E8M0": 384000,
+     "F8_E4M3": 393216000
+    }
+   },
+   "attention": {
+    "tensors": 701,
+    "bytes": 5884608036,
+    "dtypes": {
+     "BF16": 308281344,
+     "F32": 84557092,
+     "F8_E8M0": 5357824,
+     "F8_E4M3": 5486411776
+    }
+   },
+   "dense_mlp": {
+    "tensors": 64,
+    "bytes": 553648128,
+    "dtypes": {
+     "BF16": 553648128
+    }
+   },
+   "embed": {
+    "tensors": 6,
+    "bytes": 204148050960,
+    "dtypes": {
+     "BF16": 1390018560,
+     "F8_E4M3": 196613849600,
+     "F8_E8M0": 6144182800
+    }
+   },
+   "router": {
+    "tensors": 86,
+    "bytes": 161281536,
+    "dtypes": {
+     "F32": 62976,
+     "BF16": 161218560
+    }
+   },
+   "routed_expert": {
+    "tensors": 94464,
+    "bytes": 295997276160,
+    "dtypes": {
+     "F8_E8M0": 17411604480,
+     "I8": 278585671680
+    }
+   },
+   "shared_expert": {
+    "tensors": 258,
+    "bytes": 1523232000,
+    "dtypes": {
+     "F8_E8M0": 1486080,
+     "F8_E4M3": 1521745920
+    }
+   },
+   "lm_head": {
+    "tensors": 2,
+    "bytes": 1390018560,
+    "dtypes": {
+     "BF16": 1390018560
+    }
+   }
+  },
+  "moe": {
+   "num_experts": 384,
+   "top_k": 6,
+   "moe_layers": 40,
+   "bytes_per_expert": 19270656.0,
+   "routed_bytes": 295997276160
+  },
+  "per_token": {
+   "always_active_bytes": 10140695880,
+   "active_routed_bytes": 4624957440.0,
+   "total_touched_bytes": 14765653320.0
+  }
+ }
+}
