@@ -4,3 +4,12 @@ https://modal.com/apps/arnold-17059/main/ap-SfjFC9lnW2IpbgKL2gc6bx
 ✓ Created objects.
 ├── ✓ Uploaded /Users/jerry/smol-ram/modal_app/lossless_scan.py
 └── ✓ Created Function scan_shard.
+96 shards
+{'shard': 'model-00001-of-000096.safetensors', 'n': 23, 'seconds': 29.453680992126465}
+Container terminated due to preemption. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. Your Function will be restarted with the same input. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. Your Function will be restarted with the same input. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. Your Function will be restarted with the same input. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. Your Function will be restarted with the same input. For more details, see https://modal.com/docs/guide/preemption
+Container terminated due to preemption. For more details, see https://modal.com/docs/guide/preemption
