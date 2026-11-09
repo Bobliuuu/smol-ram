@@ -22,17 +22,15 @@ VOL_NAME = os.environ.get("SMOL_VOL", "kimi-k31-pro")
 vol = _vol(VOL_NAME)
 
 
-@app.function(image=image, cpu=4, memory=8192, timeout=7200, volumes={"/w": vol}, retries=3,
-              ephemeral_disk=64 * 1024)
+@app.function(image=image, cpu=4, memory=8192, timeout=7200, volumes={"/w": vol}, retries=3)
 def fetch(repo: str, fname: str, size: int):
     from huggingface_hub import hf_hub_download
     dst = f"/w/{fname}"
     if os.path.exists(dst) and os.path.getsize(dst) == size:
         return fname, "skip"
     t = time.time()
-    p = hf_hub_download(repo, fname, local_dir="/tmp/dl")
-    os.makedirs(os.path.dirname(dst) or "/w", exist_ok=True)
-    os.replace(p, dst) if os.stat(p).st_dev == os.stat("/w").st_dev else __import__("shutil").move(p, dst)
+    hf_hub_download(repo, fname, local_dir="/w")   # write straight into the volume
+    assert os.path.getsize(dst) == size, (fname, os.path.getsize(dst), size)
     vol.commit()
     return fname, f"{size / 1e9 / (time.time() - t):.2f} GB/s"
 

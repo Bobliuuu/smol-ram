@@ -27,15 +27,21 @@ app = modal.App("smol-ram-layer-eval")
 image = (
     modal.Image.from_registry("nvidia/cuda:12.8.1-devel-ubuntu22.04", add_python="3.12")
     .apt_install("curl", "git")
-    .pip_install("torch==2.8.0", "transformers==4.57.6", "safetensors==0.6.2", "einops==0.8.1",
+    .pip_install("torch==2.10.0")
+    .pip_install("fla-core==0.6.0", "transformers==4.57.6", "safetensors==0.6.2", "einops==0.8.1",
                  "tiktoken==0.12.0", "pyarrow==21.0.0", "numpy==2.1.3", "packaging", "blobfile")
-    .pip_install("flash-linear-attention")
     .run_commands(
         "mkdir -p /opt/kimi",
         "touch /opt/kimi/__init__.py",
         f"curl -sfL {K3_RAW}/modeling_kimi_linear.py -o /opt/kimi/modeling_kimi_linear.py",
         f"curl -sfL {K31_RAW}/configuration_kimi_k3.py -o /opt/kimi/configuration_kimi_k3.py",
         f"curl -sfL {K31_RAW}/tokenization_kimi.py -o /opt/kimi/tokenization_kimi.py",
+        # only decoder layers are used; make whole-model helpers optional across transformers versions
+        "python -c \"import re,pathlib; p=pathlib.Path('/opt/kimi/modeling_kimi_linear.py'); s=p.read_text(); "
+        "s=s.replace('from transformers.utils.generic import OutputRecorder, check_model_inputs', "
+        "'try:\\n    from transformers.utils.generic import OutputRecorder, check_model_inputs\\n"
+        "except ImportError:\\n    OutputRecorder = lambda *a, **k: None\\n    check_model_inputs = lambda f=None, **k: (f if f else (lambda g: g))'); p.write_text(s)\"",
+        "python -c \"import transformers, fla; print('transformers', transformers.__version__, 'fla', fla.__version__)\"",
     )
     .add_local_python_source("smol")
 )
@@ -166,10 +172,21 @@ def build_layer(cfg, i, dense, device):
     moe = getattr(layer, "block_sparse_moe", None)
     if moe is not None:
         moe.experts = torch.nn.ModuleList()   # replaced by packed experts
-    layer = layer.to_empty(device=device)
+    layer = layer.to_empty(device=device).to(torch.bfloat16)
+    # Checkpoints may zero-pad small vectors (K3/K3.1 store KDA A_log as [128] for 96 heads).
+    shapes = {k: p.shape for k, p in layer.state_dict().items()}
+    for k, t in list(dense.items()):
+        want = shapes.get(k)
+        if want is not None and t.shape != want:
+            assert t.dim() == len(want) and t.shape[1:] == want[1:] and t.shape[0] > want[0], (k, t.shape, want)
+            assert not t[want[0]:].any(), f"{k}: non-zero tail, refusing to slice"
+            dense[k] = t[: want[0]].contiguous()
     missing, unexpected = layer.load_state_dict({k: v.to(device) for k, v in dense.items()}, strict=False)
     unexpected = [k for k in unexpected if ".indexer." not in k]   # DSA indexer unused at <=2048 tokens
     assert not missing and not unexpected, (i, missing[:5], unexpected[:5])
+    for k, t in dense.items():   # keep tensors the checkpoint stores in fp32 (A_log, dt_bias, conv, bias) in fp32
+        if t.dtype == torch.float32 and ".indexer." not in k:
+            layer.get_parameter(k).data = t.to(device)
     layer.eval()
     return layer
 
@@ -205,7 +222,7 @@ def install_packed_moe(layer, packed, lut, expert_fn, keep_mask, counts_out):
         flat = topk_ids.view(-1)
         cnt = torch.bincount(flat, minlength=moe.num_experts)
         if counts_out is not None:
-            counts_out += cnt.cpu()
+            counts_out.add_(cnt.cpu())
         idxs = flat.argsort()
         sorted_tokens = x[idxs // K]
         out = torch.empty_like(sorted_tokens)
@@ -214,10 +231,11 @@ def install_packed_moe(layer, packed, lut, expert_fn, keep_mask, counts_out):
             if n == 0:
                 continue
             xs = sorted_tokens[start:start + n]
+            xs = xs.to(torch.bfloat16)
             g = xs @ W("w1", e).T
             u = xs @ W("w3", e).T
             h = act(torch.cat([g, u], -1)) if act is not None else torch.nn.functional.silu(g) * u
-            out[start:start + n] = h @ W("w2", e).T
+            out[start:start + n] = (h @ W("w2", e).T).to(out.dtype)
             start += n
         new_x = torch.empty_like(out)
         new_x[idxs] = out
@@ -247,7 +265,7 @@ def tokenize_corpus(tok_dir, n_seq, seq_len, split):
 
 # ----------------------------------------------------------------------------- main pass
 @app.function(image=image, gpu="H100", cpu=16, memory=262144, timeout=6 * 3600,
-              volumes={"/w": wvol, "/results": rvol}, ephemeral_disk=64 * 1024)
+              volumes={"/w": wvol, "/results": rvol})
 def run(variants: str, n_seq: int, seq_len: int, n_cal: int, tag: str, max_layers: int = 0):
     import torch
     sys.path.insert(0, "/opt")
@@ -341,7 +359,10 @@ def run(variants: str, n_seq: int, seq_len: int, n_cal: int, tag: str, max_layer
                     errs.append(((s["expert_fn"](w.bfloat16()).float() - w).norm() / w.norm()).item())
                 werr.setdefault(s["name"], []).append(sum(errs) / len(errs))
         del layer, dense, packed
+        import gc
+        gc.collect()   # moe_infer closure <-> module cycle holds the packed experts otherwise
         torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
         say(f"layer {i} done in {time.time() - tl:.1f}s; mem {torch.cuda.max_memory_allocated() / 1e9:.1f} GB")
 
     # head
@@ -360,7 +381,7 @@ def run(variants: str, n_seq: int, seq_len: int, n_cal: int, tag: str, max_layer
     for s, st in zip(specs, states):
         h, br = st
         h = _apply_attn_res(h.view(-1, H), br, oproj, onorm).view(*h.shape) if br.shape[1] else h
-        h = fnorm(h)[:, :-1].reshape(-1, H)
+        h = fnorm(h)[:, :-1].reshape(-1, H).to(head.dtype)
         nll, kl, n = 0.0, 0.0, 0
         lps = []
         for c in range(0, h.shape[0], 1024):
