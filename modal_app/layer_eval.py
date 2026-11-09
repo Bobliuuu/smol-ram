@@ -167,6 +167,8 @@ def make_variant(spec):
 def build_layer(cfg, i, dense, device):
     import torch
     from kimi.modeling_kimi_linear import KimiDecoderLayer
+    for k in [k for k in dense if ".indexer." in k]:   # DSA indexer: selects all keys at <=2048 tokens
+        dense.pop(k)
     with torch.device("meta"):
         layer = KimiDecoderLayer(cfg, i)
     moe = getattr(layer, "block_sparse_moe", None)

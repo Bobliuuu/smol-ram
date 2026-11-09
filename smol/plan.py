@@ -20,7 +20,7 @@ NATIVE_BPW = {"BF16": 16, "F16": 16, "F32": 32, "F8_E4M3": 8, "I8": 8, "U8": 8, 
 # Recipes: role -> target bits/weight (None = keep native), prune = fraction of routed experts removed.
 # lossless numbers come from the measured entropy floor (reports/kimi-k3.1-pro_lossless.md).
 # Measured lossless (entropy-coded) size factor per stored dtype; unmeasured dtypes stay 1.0.
-LOSSLESS = {"U8": 3.786 / 4.25, "BF16": 11.3 / 16}
+LOSSLESS = {"U8": (1279.22 + 7.44) / 1446.46, "BF16": 0.665}   # reports/kimi-k3.1-pro_lossless.md
 
 RECIPES = {
     "native": {},

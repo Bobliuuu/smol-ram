@@ -1,57 +1,69 @@
 # smol-ram
 
-Run very large models with a hard **RAM cap (8 GB)** while pushing the **on-disk (SSD) size** as low as it goes.
+Run very large models under a hard **RAM cap (8 GB)** while pushing their **SSD footprint** down, for any
+safetensors model. Kimi K3.1 Pro (2.78T params, 1.56 TB) is the first target.
 
-The first version ran Kimi K3.1 in 8 GB RAM from a ~1.6 TB SSD checkpoint. This version generalizes it:
-given *any* safetensors model and a RAM budget, find the smallest SSD artifact that keeps quality, and
-measure the quality and speed cost of each step.
+With 8 GB RAM almost nothing stays resident, so each token streams its weights from SSD.
+Bytes on disk are close to bytes read per token, so a smaller artifact is also a faster one.
 
-## Why SSD size matters even when only RAM is the constraint
+## Tools
 
-With 8 GB RAM almost nothing stays resident, so **every token streams its weights from SSD**.
-Bytes on disk ≈ bytes read per token, so shrinking the artifact also speeds up decode.
+| tool | what it does |
+|---|---|
+| `python3 -m smol.inspect_model <hf-repo>` | byte budget by tensor role from shard headers only (HTTP Range, no download) |
+| `python3 -m smol.entropy_probe <hf-repo>` | lossless floor of packed low-bit tensors from sampled experts |
+| `modal run --detach modal_app/lossless_scan.py` | exact entropy + verified zstd round-trip of every tensor, one container per shard |
+| `modal run --detach modal_app/fetch_weights.py` | copy a repo into a Modal Volume (one container per shard) |
+| `modal run --detach modal_app/layer_eval.py --variants ...` | layer-streamed end-to-end quality of compression variants on one GPU |
+| `python3 -m smol.plan reports/*_budget.json` | SSD size, per-token reads and SSD-bound tok/s under a RAM cap |
 
-## Measured facts: Kimi K3.1 Pro (header-only, no download)
+## Kimi K3.1 Pro: where the bytes are
 
-`python3 -m smol.inspect_model moonshotai/Kimi-K3.1-Pro`
-
-| role | GB | dtype |
+| role | GB | stored as |
 |---|---:|---|
-| routed experts (92 layers × 896, top-16) | 1446.5 | MXFP4 (QAT), u8 E8M0 scale / 32 |
-| attention (KDA ×69, MLA+DSA ×24) | 72.7 | bf16 |
-| shared experts (2/layer) | 24.3 | bf16 |
-| latent MoE up/down proj (7168↔3584) | 9.5 | bf16 |
-| embed + lm_head | 4.7 | bf16 |
-| router, dense layer 0, norms, vision | 3.6 | bf16/f32 |
-| **total** | **1561** | |
+| routed experts (92 layers × 896, top-16) | 1446.5 | MXFP4 (QAT), E8M0 scale per 32 |
+| attention (69 KDA + 24 MLA/DSA layers) | 72.7 | bf16 |
+| shared experts | 24.3 | bf16 |
+| latent MoE projections (7168↔3584) | 9.5 | bf16 |
+| embed, lm_head, router, dense layer 0, vision, norms | 8.2 | bf16 / f32 |
 
-Per decoded token: **111.5 GB always-active (bf16)** + 25.8 GB routed experts (16 × 92 × 17.55 MB) = **137 GB read**.
-The always-active bf16 part, not the experts, dominates streaming at 8 GB RAM.
+Each token reads **111.5 GB of always-active bf16** plus 25.8 GB of routed experts. Unlike DeepSeek V4.1,
+GLM-5.3, MiniMax M3 or Qwen3.5-397B (10 to 24 GB always-active), K3.1's dense part dominates at 8 GB RAM.
+See `reports/plan_8gb.md`.
 
-**Lossless floor for experts** (`python3 -m smol.entropy_probe`, 27 sampled expert matrices, layers 1/46/91):
-FP4 codes carry 3.763 of 4 bits, and the E8M0 scales take only 3 to 4 distinct values (0.745 of 8 bits).
-So **4.25 → 3.79 bits/weight, −10.9%, bit-exact**.
+## Lossless (bit-exact): 1561 → 1363 GB
 
-## Plan (levers, in the order we test them)
+Full scan of all 96 shards (`reports/kimi-k3.1-pro_lossless.md`):
 
-| # | lever | target | quality risk |
-|---|---|---|---|
-| L0 | lossless: rANS on FP4 codes + scales, bf16 exponent coding for dense tensors | 1561 → ~1360 GB | none (bit-exact) |
-| L1 | dense bf16 → 4-bit (HQQ/GPTQ-style, group 64), lossless-coded | 111 → ~30 GB; per-token read 137 → ~50 GB | low |
-| L2 | expert usage profiling → prune never/rarely-routed experts (REAP-style) | −25 to −50% of experts | measured |
-| L3 | experts MXFP4 → 2–3 bit trellis/codebook, bits allocated by routing frequency | 3.79 → ~2.2 bits | measured; QAT model, so a careful re-quant |
-| L4 | expert-delta: shared basis + low-rank residual per layer | experimental | measured |
+| stream | native GB | entropy floor | zstd-3 |
+|---|---:|---:|---:|
+| FP4 expert codes | 1361.4 | 94.0% | 94.3% |
+| E8M0 expert scales | 85.1 | 8.7% | 16.4% |
+| bf16 tensors | 114.7 | 66.5% | 71.4% |
+| **total** | **1561.2** | **1362.9 (87.3%)** | **1380.0 (88.4%)** |
 
-Target: **Kimi K3.1 Pro under ~300 GB on SSD, still 8 GB RAM**, with perplexity and task deltas reported per lever.
+Order-1 context on FP4 codes gains less than 0.2%, so neighbouring codes are close to independent.
 
-## Method (generic)
+## Lossy levers, measured end to end (`reports/kimi-k3.1-pro_pass1.md`)
 
-1. `inspect_model`: role/byte budget from headers only (works on any HF repo).
-2. `entropy_probe`: lossless floor per tensor class from Range-fetched samples.
-3. Layer-streaming evaluator: run the model one decoder layer at a time on 1 GPU, reading each layer's weights
-   once per pass, to get reference vs compressed logits (KL, PPL) without holding the model.
-4. Runtime: mmap/stream engine under a cgroup `memory.max=8G` (page cache counted), reporting tok/s.
+All 93 layers, one H100, 16K eval tokens; KL is against the unmodified model. Quantizers are naive RTN (g64).
 
-## Reports
+| variant | SSD GB | KL (nats/tok) |
+|---|---:|---:|
+| reference, lossless-coded | 1366 | 0 |
+| prune 25% least-routed experts | 1044 | 0.053 |
+| dense → int4 | 1323 | 0.053 |
+| experts → int3 | 1268 | 0.059 |
+| prune 50% | 721 | 0.284 |
+| dense → int3 | 1316 | 0.322 |
+| experts → int2 | 928 | 0.387 |
+| dense int4 + experts int2 + prune 25% | 673 | 0.590 |
 
-See `reports/` for raw numbers.
+Pruning is the cheapest lever per GB: −322 GB for the same KL that int4 dense costs for −43 GB.
+Naive RTN below 4 bits is too lossy on this QAT model.
+
+## Next
+
+1. Better quantizers: GPTQ/HQQ with per-expert calibration Hessians; codebook/trellis at 2 to 2.5 bpw.
+2. Better pruning: REAP-style saliency (gate weight × output norm) and expert merging, with more calibration tokens.
+3. Runtime: mmap/stream engine under `memory.max=8G` with an entropy decoder fast enough for 7 GB/s.
