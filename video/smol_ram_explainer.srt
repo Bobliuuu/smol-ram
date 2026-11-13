@@ -1,0 +1,144 @@
+1
+00:00:00,400 --> 00:00:05,646
+smol ram: running very large models under a hard eight gigabyte RAM cap, by shrinking what
+
+2
+00:00:05,646 --> 00:00:07,920
+every token has to read from the S S D.
+
+3
+00:00:08,920 --> 00:00:12,542
+Kimi K three point one Pro is 1,561 gigabytes on disk.
+
+4
+00:00:12,542 --> 00:00:18,848
+With eight gigabytes of RAM, almost nothing stays resident, so every token streams its weights
+
+5
+00:00:18,848 --> 00:00:19,854
+from the S S D.
+
+6
+00:00:19,854 --> 00:00:26,026
+Bytes on disk are close to bytes read per token, so a smaller artifact is also a faster one.
+
+7
+00:00:27,030 --> 00:00:28,244
+Where are the bytes?
+
+8
+00:00:28,244 --> 00:00:31,945
+Routed experts, stored in M X F P four, are almost all of it.
+
+9
+00:00:31,945 --> 00:00:37,588
+But each token reads 111.5 gigabytes of always active bf sixteen weights, plus 25.8 gigabytes
+
+10
+00:00:37,588 --> 00:00:42,017
+of routed experts, so the dense part dominates at eight gigabytes of RAM.
+
+11
+00:00:43,020 --> 00:00:44,450
+The tools work in stages.
+
+12
+00:00:44,450 --> 00:00:47,595
+Shard headers give the byte budget without downloading.
+
+13
+00:00:47,595 --> 00:00:49,940
+A scan measures the exact lossless floor.
+
+14
+00:00:49,940 --> 00:00:54,801
+A layer streamed evaluation measures the quality of each lossy lever on a single GPU.
+
+15
+00:00:54,801 --> 00:00:58,347
+And a planner turns it all into S S D bound tokens per second.
+
+16
+00:00:59,350 --> 00:01:01,894
+Lossless coding has limited room.
+
+17
+00:01:01,894 --> 00:01:09,142
+A full scan of all ninety six shards puts the bit exact floor at 1,363 gigabytes, 87.3 percent
+
+18
+00:01:09,142 --> 00:01:09,913
+of native.
+
+19
+00:01:09,913 --> 00:01:13,922
+The F P four expert codes are nearly incompressible.
+
+20
+00:01:14,920 --> 00:01:20,378
+The lossy levers, measured end to end over all 93 layers on one H100, with K L divergence
+
+21
+00:01:20,378 --> 00:01:22,156
+against the unmodified model.
+
+22
+00:01:22,156 --> 00:01:27,553
+Pruning twenty five percent of the least routed experts saves 322 gigabytes for the same
+
+23
+00:01:27,553 --> 00:01:31,294
+divergence that int four dense costs 43 gigabytes of savings.
+
+24
+00:01:31,294 --> 00:01:33,931
+Pruning is the cheapest lever per gigabyte.
+
+25
+00:01:34,930 --> 00:01:40,861
+Naive round to nearest quantization below four bits is too lossy on this quantization aware
+
+26
+00:01:40,861 --> 00:01:41,774
+trained model.
+
+27
+00:01:41,774 --> 00:01:47,966
+Combining dense int four, experts at int two and pruning gets down to 673 gigabytes, but at the
+
+28
+00:01:47,966 --> 00:01:49,204
+highest divergence.
+
+29
+00:01:50,200 --> 00:01:56,265
+The planner estimates S S D bound tokens per second at eight gigabytes of RAM across 5 models.
+
+30
+00:01:56,265 --> 00:02:02,137
+For Kimi K three point one Pro the native recipe gives 0.05 tokens per second, and the most
+
+31
+00:02:02,137 --> 00:02:08,008
+aggressive recipe 0.24, at 300 gigabytes, though that recipe's quality is not yet measured.
+
+32
+00:02:09,010 --> 00:02:09,457
+Caveats.
+
+33
+00:02:09,457 --> 00:02:13,308
+Quality is measured on sixteen thousand tokens with naive quantizers.
+
+34
+00:02:13,308 --> 00:02:18,554
+The tokens per second figures are S S D bound estimates that ignore compute, and the streaming
+
+35
+00:02:18,554 --> 00:02:20,899
+runtime itself is still on the to do list.
+
+36
+00:02:21,900 --> 00:02:26,258
+The reports, the tools and the planner are all in the repo.
+

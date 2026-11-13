@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1550 408" width="1550" height="408" role="img" aria-label="From model repo to tokens per second">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8a98ad"/></marker></defs>
+<rect width="1550" height="408" rx="16" fill="#0b0f17"/>
+<text x="40" y="42" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="22" fill="#e6edf6">From model repo to tokens per second</text>
+<polyline points="310,132 375,132 375,132 440,132" fill="none" stroke="#8a98ad" stroke-width="2.2" marker-end="url(#ah)"/>
+<polyline points="710,132 775,132 775,132 840,132" fill="none" stroke="#8a98ad" stroke-width="2.2" marker-end="url(#ah)"/>
+<polyline points="575,184 575,264" fill="none" stroke="#8a98ad" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="575" y="216" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">writes</text>
+<polyline points="710,316 975,316 975,316 1240,316" fill="none" stroke="#8a98ad" stroke-width="2.2" marker-end="url(#ah)"/>
+<text x="975" y="308" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">read</text>
+<polyline points="840,132 775,132 775,316 710,316" fill="none" stroke="#8a98ad" stroke-width="2.2" marker-end="url(#ah)"/>
+<rect x="40" y="80" width="270" height="104" rx="12" fill="#131a26" stroke="#27c8e8" stroke-width="2"/>
+<text x="175.0" y="118" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="19" fill="#e6edf6">inspect_model</text>
+<text x="175.0" y="142" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">byte budget from shard headers</text>
+<rect x="440" y="80" width="270" height="104" rx="12" fill="#131a26" stroke="#27c8e8" stroke-width="2"/>
+<text x="575.0" y="118" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="19" fill="#e6edf6">lossless_scan</text>
+<text x="575.0" y="142" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">entropy floor + zstd round trip</text>
+<rect x="840" y="80" width="270" height="104" rx="12" fill="#131a26" stroke="#27c8e8" stroke-width="2"/>
+<text x="975.0" y="118" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="19" fill="#e6edf6">layer_eval</text>
+<text x="975.0" y="142" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">KL of each lossy lever</text>
+<rect x="440" y="264" width="270" height="104" rx="12" fill="#131a26" stroke="#f2c14e" stroke-width="2"/>
+<text x="575.0" y="302" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="19" fill="#e6edf6">reports/*</text>
+<text x="575.0" y="326" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">budget, lossless, pass1 files</text>
+<rect x="1240" y="264" width="270" height="104" rx="12" fill="#131a26" stroke="#ff6b6b" stroke-width="2"/>
+<text x="1375.0" y="302" text-anchor="middle" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="19" fill="#e6edf6">plan</text>
+<text x="1375.0" y="326" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13" fill="#8a98ad">SSD size, reads/token, tok/s</text>
+</svg>

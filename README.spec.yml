@@ -1,0 +1,266 @@
+# python3 ~/video-readme-maker/vrm.py all README.spec.yml   (numbers: tools/readme_data.py from reports/)
+project:
+  name: smol-ram
+  emoji: "🪶"
+  tagline: "Run very large models under a hard 8 GB RAM cap by shrinking what each token must read from SSD"
+  repo: Bobliuuu/smol-ram
+hero:
+  title: smol-ram
+  subtitle: "bytes on disk are close to bytes read per token, so smaller is faster"
+  chips: [8 GB RAM cap, SSD streaming, Kimi K3.1 Pro, lossless + lossy levers]
+theme: {accent: "#27c8e8", accent2: "#ff6b6b", accent3: "#f2c14e", good: "#3ddc97"}
+readme_out: README.md
+assets_dir: assets
+badges:
+  - {label: RAM cap, message: "8 GB", color: 27c8e8}
+  - {label: first target, message: "Kimi K3.1 Pro · {{ n.total_gb.text }}", color: ff6b6b}
+  - {label: lossless, message: "{{ n.ll_native.text }} to {{ n.ll_entropy.text }}", color: 3ddc97}
+  - {label: release, message: "v0.1.0", color: 27c8e8, link: "https://github.com/Bobliuuu/smol-ram/releases/tag/v0.1.0"}
+  - {label: Hugging Face, message: "reports dataset", color: ffd21e, logo: huggingface, link: "https://huggingface.co/datasets/Bobliu/smol-ram-reports"}
+  - {label: python, message: "3.x", color: 3776ab, logo: python}
+nav:
+  - {emoji: "🎬", label: Video, anchor: video}
+  - {emoji: "🧰", label: Tools, anchor: tools}
+  - {emoji: "📦", label: Where the bytes are, anchor: bytes}
+  - {emoji: "🗜️", label: Lossless, anchor: lossless}
+  - {emoji: "🔪", label: Lossy levers, anchor: lossy}
+  - {emoji: "📈", label: Plan, anchor: plan}
+  - {emoji: "⚠️", label: Caveats, anchor: caveats}
+  - {emoji: "🗺️", label: Repo map, anchor: repo-map}
+
+numbers:
+  total_gb: {file: results/derived/readme_data.json, path: budget.total_gb, fmt: "{:,.0f}", unit: " GB"}
+  experts: {file: results/derived/readme_data.json, path: budget.experts}
+  top_k: {file: results/derived/readme_data.json, path: budget.top_k}
+  moe_layers: {file: results/derived/readme_data.json, path: budget.moe_layers}
+  always_gb: {file: results/derived/readme_data.json, path: budget.always_gb, fmt: "{:.1f}", unit: " GB"}
+  routed_gb: {file: results/derived/readme_data.json, path: budget.routed_gb, fmt: "{:.1f}", unit: " GB"}
+  ll_native: {file: results/derived/readme_data.json, path: lossless.native_gb, fmt: "{:,.0f}", unit: " GB"}
+  ll_entropy: {file: results/derived/readme_data.json, path: lossless.entropy_gb, fmt: "{:,.0f}", unit: " GB"}
+  ll_pct: {file: results/derived/readme_data.json, path: lossless.entropy_pct, fmt: "{:.1f}", unit: "%"}
+  zstd_pct: {file: results/derived/readme_data.json, path: lossless.zstd_pct, fmt: "{:.1f}", unit: "%"}
+  prune_saves: {file: results/derived/readme_data.json, path: lever_gb.prune25_saves, unit: " GB"}
+  int4_saves: {file: results/derived/readme_data.json, path: lever_gb.int4_saves, unit: " GB"}
+  ref_gb: {file: results/derived/readme_data.json, path: lever_gb.ref_gb, fmt: "{:,.0f}", unit: " GB"}
+  best_gb: {file: results/derived/readme_data.json, path: lever_gb.best_gb, fmt: "{:,.0f}", unit: " GB"}
+  layers: {file: results/derived/readme_data.json, path: pass1.layers}
+  tokens: {file: results/derived/readme_data.json, path: pass1.tokens, fmt: "{:,.0f}"}
+  plan_models: {file: results/derived/readme_data.json, path: plan_models}
+  k_native: {file: results/derived/readme_data.json, path: kimi_plan.native_toks, fmt: "{:.2f}"}
+  k_best: {file: results/derived/readme_data.json, path: kimi_plan.best_toks, fmt: "{:.2f}"}
+  k_best_gb: {file: results/derived/readme_data.json, path: kimi_plan.best_gb, unit: " GB"}
+
+intro: |
+  <a id="video"></a>
+  With 8 GB of RAM almost nothing stays resident, so each token **streams its weights from SSD**. Bytes on disk are close to bytes read per token,
+  so a smaller artifact is also a faster one. smol-ram measures where the bytes are in any safetensors model, how far lossless coding gets,
+  what each lossy lever costs in quality, and what that means for SSD-bound tokens per second. Kimi K3.1 Pro (2.78T parameters, {{ n.total_gb.text }}) is the first target.
+
+video:
+  url: ""
+  caption: "Explainer video (voice-over and captions): the 8 GB problem, where the bytes are, lossless limits, lossy levers, the plan"
+  mp4: video/smol_ram_explainer.mp4
+  gif: video/preview.gif
+  srt: video/smol_ram_explainer.srt
+  poster: video/poster.png
+  out_dir: video/.render
+  fps: 24
+  max_mb: 22
+  render_crf: 18
+  concurrency: 4
+  music: true
+  voice: {engine: openai, voice: alloy, model: gpt-4o-mini-tts, tempo: 1.2}
+  scenes:
+    - type: title
+      title: smol-ram
+      subtitle: Very large models under an 8 GB RAM cap
+      chips: [SSD streaming, Kimi K3.1 Pro, MXFP4, entropy coding]
+      say: "smol ram: running very large models under a hard eight gigabyte RAM cap, by shrinking what every token has to read from the S S D."
+    - type: problem
+      heading: "The problem"
+      bullets:
+        - "Kimi K3.1 Pro is {{ n.total_gb.text }} on disk"
+        - "With 8 GB of RAM nothing stays resident"
+        - "Every token streams its weights from SSD"
+        - "Bytes on disk are close to bytes read per token"
+      say: "Kimi K three point one Pro is {{ n.total_gb.numtext }} gigabytes on disk. With eight gigabytes of RAM, almost nothing stays resident, so every token streams its weights from the S S D. Bytes on disk are close to bytes read per token, so a smaller artifact is also a faster one."
+    - type: chart
+      chart: roles
+      say: "Where are the bytes? Routed experts, stored in M X F P four, are almost all of it. But each token reads {{ n.always_gb.numtext }} gigabytes of always active bf sixteen weights, plus {{ n.routed_gb.numtext }} gigabytes of routed experts, so the dense part dominates at eight gigabytes of RAM."
+    - type: architecture
+      diagram: flow
+      heading: "The pipeline"
+      say: "The tools work in stages. Shard headers give the byte budget without downloading. A scan measures the exact lossless floor. A layer streamed evaluation measures the quality of each lossy lever on a single GPU. And a planner turns it all into S S D bound tokens per second."
+    - type: stat
+      number: ll_entropy
+      kicker: "lossless floor, from {{ n.ll_native.text }}"
+      label: "bit-exact, {{ n.ll_pct.text }} of native"
+      sub: "full scan of all 96 shards"
+      say: "Lossless coding has limited room. A full scan of all ninety six shards puts the bit exact floor at {{ n.ll_entropy.numtext }} gigabytes, {{ n.ll_pct.numtext }} percent of native. The F P four expert codes are nearly incompressible."
+    - type: chart
+      chart: levers
+      say: "The lossy levers, measured end to end over all {{ n.layers.numtext }} layers on one H100, with K L divergence against the unmodified model. Pruning twenty five percent of the least routed experts saves {{ n.prune_saves.numtext }} gigabytes for the same divergence that int four dense costs {{ n.int4_saves.numtext }} gigabytes of savings. Pruning is the cheapest lever per gigabyte."
+    - type: table
+      table: levers_tbl
+      heading: "Lossy levers: size versus quality"
+      say: "Naive round to nearest quantization below four bits is too lossy on this quantization aware trained model. Combining dense int four, experts at int two and pruning gets down to {{ n.best_gb.numtext }} gigabytes, but at the highest divergence."
+    - type: chart
+      chart: plan
+      say: "The planner estimates S S D bound tokens per second at eight gigabytes of RAM across {{ n.plan_models.numtext }} models. For Kimi K three point one Pro the native recipe gives {{ n.k_native.numtext }} tokens per second, and the most aggressive recipe {{ n.k_best.numtext }}, at {{ n.k_best_gb.numtext }} gigabytes, though that recipe's quality is not yet measured."
+    - type: caveats
+      heading: "Honest caveats"
+      bullets:
+        - "Quality numbers: one H100, 16K eval tokens, naive RTN quantizers"
+        - "Reference perplexity 1.41, so KL is the metric that matters"
+        - "Tokens per second are SSD-bound estimates; compute is ignored"
+        - "The streaming runtime is not built yet"
+      say: "Caveats. Quality is measured on sixteen thousand tokens with naive quantizers. The tokens per second figures are S S D bound estimates that ignore compute, and the streaming runtime itself is still on the to do list."
+    - type: end
+      title: smol-ram
+      subtitle: "Reports, tools and the planner are in the repo"
+      say: "The reports, the tools and the planner are all in the repo."
+
+tables:
+  - id: roles_tbl
+    title: "Kimi K3.1 Pro: where the bytes are (reports/kimi-k3.1-pro_budget.json)"
+    file: results/derived/readme_data.json
+    rows_path: roles
+    columns:
+      - {key: role, title: Role}
+      - {key: gb, title: GB, align: right, fmt: "{:,.1f}"}
+  - id: ll_tbl
+    title: "Lossless scan of all 96 shards (reports/kimi-k3.1-pro_lossless.md)"
+    file: results/derived/readme_data.json
+    rows_path: lossless_rows
+    columns:
+      - {key: stream, title: Stream}
+      - {key: raw_gb, title: "Native GB", align: right, fmt: "{:,.1f}"}
+      - {key: entropy_pct, title: "Entropy floor %", align: right, fmt: "{:.1f}", unit: "%"}
+  - id: levers_tbl
+    title: "Lossy levers, all 93 layers, one H100, 16K eval tokens (reports/kimi-k3.1-pro_pass1.json)"
+    file: results/derived/readme_data.json
+    rows_path: levers
+    columns:
+      - {key: variant, title: Variant}
+      - {key: ssd_gb, title: "SSD GB (est.)", align: right, fmt: "{:,.0f}"}
+      - {key: kl, title: "KL vs ref (nats/tok)", align: right, fmt: "{:.3f}"}
+      - {key: ppl, title: PPL, align: right, fmt: "{:.3f}"}
+  - id: plan_tbl
+    title: "SSD-bound tokens/s at 8 GB RAM, 7 GB/s SSD (reports/plan_8gb.md)"
+    file: results/derived/readme_data.json
+    rows_path: plan
+    columns:
+      - {key: model, title: Model}
+      - {key: recipe, title: Recipe}
+      - {key: ssd_gb, title: "SSD GB", align: right, fmt: "{:,.0f}"}
+      - {key: toks, title: "tok/s", align: right, fmt: "{:.2f}"}
+
+charts:
+  - id: roles
+    type: bar
+    title: "Kimi K3.1 Pro: GB on disk by role"
+    subtitle: "from shard headers (HTTP Range), no download"
+    better: lower
+    file: results/derived/readme_data.json
+    rows_path: roles
+    label: role
+    y: gb
+    fmt: "{:,.1f}"
+    unit: " GB"
+  - id: levers
+    type: bar
+    title: "KL against the unmodified model (nats/token, lower is better)"
+    subtitle: "all 93 layers, one H100, 16K eval tokens, naive RTN g64"
+    better: lower
+    file: results/derived/readme_data.json
+    rows_path: levers
+    label: variant
+    y: kl
+    fmt: "{:.3f}"
+  - id: plan
+    type: gbar
+    title: "SSD-bound tokens/s at 8 GB RAM: native versus d3_e1.6_p50 recipe"
+    subtitle: "7 GB/s SSD, compute ignored; estimates from the planner"
+    better: higher
+    file: results/derived/readme_data.json
+    rows_path: plan_chart
+    cat: model
+    series: recipe
+    y: toks
+    fmt: "{:.2f}"
+
+diagrams:
+  - id: flow
+    title: "From model repo to tokens per second"
+    nodes:
+      - {id: h, label: "inspect_model", sub: "byte budget from shard headers", col: 0, row: 0}
+      - {id: s, label: "lossless_scan", sub: "entropy floor + zstd round trip", col: 1, row: 0}
+      - {id: l, label: "layer_eval", sub: "KL of each lossy lever", col: 2, row: 0}
+      - {id: r, label: "reports/*", sub: "budget, lossless, pass1 files", col: 1, row: 1, kind: store}
+      - {id: p, label: "plan", sub: "SSD size, reads/token, tok/s", col: 3, row: 1, kind: accent}
+    edges:
+      - {from: h, to: s}
+      - {from: s, to: l}
+      - {from: s, to: r, label: writes}
+      - {from: r, to: p, label: read}
+      - {from: l, to: r}
+
+sections:
+  - title: Tools
+    emoji: "🧰"
+    id: tools
+    body: |
+      | tool | what it does |
+      |---|---|
+      | `python3 -m smol.inspect_model <hf-repo>` | byte budget by tensor role from shard headers only (HTTP Range, no download) |
+      | `python3 -m smol.entropy_probe <hf-repo>` | lossless floor of packed low-bit tensors from sampled experts |
+      | `modal run --detach modal_app/lossless_scan.py` | exact entropy + verified zstd round-trip of every tensor, one container per shard |
+      | `modal run --detach modal_app/fetch_weights.py` | copy a repo into a Modal Volume (one container per shard) |
+      | `modal run --detach modal_app/layer_eval.py --variants ...` | layer-streamed end-to-end quality of compression variants on one GPU |
+      | `python3 -m smol.plan reports/*_budget.json` | SSD size, per-token reads and SSD-bound tok/s under a RAM cap |
+    diagrams: [flow]
+  - title: Where the bytes are
+    emoji: "📦"
+    id: bytes
+    body: "Routed experts: {{ n.moe_layers.text }} MoE layers x {{ n.experts.text }} experts, top-{{ n.top_k.text }}, stored as MXFP4 (QAT) with an E8M0 scale per 32. Attention: 69 KDA + 24 MLA/DSA layers in bf16. Each token reads **{{ n.always_gb.text }} of always-active bf16** plus {{ n.routed_gb.text }} of routed experts."
+    charts: [roles]
+    tables: [roles_tbl]
+    after: "Unlike DeepSeek V4.1, GLM-5.3, MiniMax M3 or Qwen3.5-397B (10 to 24 GB always-active), K3.1's dense part dominates at 8 GB RAM. See [reports/plan_8gb.md](reports/plan_8gb.md)."
+  - title: Lossless (bit-exact)
+    emoji: "🗜️"
+    id: lossless
+    body: "Full scan of all 96 shards: {{ n.ll_native.text }} to an entropy floor of {{ n.ll_entropy.text }} ({{ n.ll_pct.text }}); zstd-3 reaches {{ n.zstd_pct.text }}. Order-1 context on FP4 codes gains less than 0.2%, so neighbouring codes are close to independent. Details: [reports/kimi-k3.1-pro_lossless.md](reports/kimi-k3.1-pro_lossless.md)."
+    tables: [ll_tbl]
+  - title: Lossy levers, measured end to end
+    emoji: "🔪"
+    id: lossy
+    body: "All {{ n.layers.text }} layers, one H100, {{ n.tokens.text }} eval tokens; KL is against the unmodified model; quantizers are naive RTN (g64). Pruning is the cheapest lever per GB: -{{ n.prune_saves.text }} for the same KL that int4 dense costs for -{{ n.int4_saves.text }}. Naive RTN below 4 bits is too lossy on this QAT model."
+    charts: [levers]
+    tables: [levers_tbl]
+  - title: Plan at 8 GB RAM
+    emoji: "📈"
+    id: plan
+    body: "SSD 7.0 GB/s, reads are SSD-bound and compute is ignored. Kimi K3.1 Pro: {{ n.k_native.text }} tok/s native, {{ n.k_best.text }} tok/s with the d3_e1.6_p50 recipe ({{ n.k_best_gb.text }}); that recipe's quality has not been measured end to end."
+    charts: [plan]
+    tables: [plan_tbl]
+  - title: Next
+    emoji: "🔭"
+    id: next
+    body: |
+      1. Better quantizers: GPTQ/HQQ with per-expert calibration Hessians; codebook/trellis at 2 to 2.5 bpw.
+      2. Better pruning: REAP-style saliency (gate weight x output norm) and expert merging, with more calibration tokens.
+      3. Runtime: mmap/stream engine under `memory.max=8G` with an entropy decoder fast enough for 7 GB/s.
+
+caveats:
+  - "Quality numbers come from one H100 run, 16K wikitext-2 tokens, naive RTN quantizers; reference perplexity is 1.41 (largely memorised), so KL against the unmodified model is the metric."
+  - "Tokens per second are SSD-bound estimates from the planner (compute ignored); recipes other than the measured levers are projections."
+  - "There is no streaming runtime yet; the repo contains the measurement and planning tools, not compressed model weights."
+repo_map:
+  - {path: smol/, desc: "inspect_model, entropy_probe and plan tools"}
+  - {path: modal_app/, desc: "lossless_scan, fetch_weights and layer_eval for Modal"}
+  - {path: reports/, desc: "budget, lossless and pass-1 results for Kimi K3.1 Pro; budgets for four other models; plan_8gb.md"}
+  - {path: tools/readme_data.py, desc: "derives README and video numbers from reports/"}
+  - {path: docs/README_FULL.md, desc: "the previous README, kept for reference"}
+  - {path: README.spec.yml, desc: "spec for video-readme-maker"}
+  - {path: video/, desc: "explainer mp4, srt, poster, preview.gif (generated)"}
+footer: "Generated with video-readme-maker from README.spec.yml and reports/."

@@ -1,0 +1,417 @@
+{
+ "budget": {
+  "total_gb": 1561.2,
+  "experts": 896,
+  "top_k": 16,
+  "moe_layers": 92,
+  "always_gb": 111.5,
+  "routed_gb": 25.8
+ },
+ "roles": [
+  {
+   "role": "routed experts",
+   "gb": 1446.5
+  },
+  {
+   "role": "attention",
+   "gb": 72.7
+  },
+  {
+   "role": "shared experts",
+   "gb": 24.3
+  },
+  {
+   "role": "latent MoE projections",
+   "gb": 9.5
+  },
+  {
+   "role": "embed + lm_head",
+   "gb": 4.7
+  },
+  {
+   "role": "router, dense, vision, norms",
+   "gb": 3.6
+  }
+ ],
+ "lossless": {
+  "native_gb": 1561.22,
+  "entropy_gb": 1362.94,
+  "entropy_pct": 87.3,
+  "zstd_gb": 1380.02,
+  "zstd_pct": 88.4
+ },
+ "lossless_rows": [
+  {
+   "stream": "routed_expert.codes",
+   "raw_gb": 1361.37,
+   "entropy_pct": 94.0
+  },
+  {
+   "stream": "routed_expert.scales",
+   "raw_gb": 85.09,
+   "entropy_pct": 8.7
+  },
+  {
+   "stream": "attention",
+   "raw_gb": 72.72,
+   "entropy_pct": 66.5
+  },
+  {
+   "stream": "shared_expert",
+   "raw_gb": 24.31,
+   "entropy_pct": 66.2
+  }
+ ],
+ "levers": [
+  {
+   "variant": "ref",
+   "ssd_gb": 1366.0,
+   "kl": 0.0,
+   "ppl": 1.415
+  },
+  {
+   "variant": "dense_int4g64",
+   "ssd_gb": 1323.0,
+   "kl": 0.053,
+   "ppl": 1.483
+  },
+  {
+   "variant": "dense_int3g64",
+   "ssd_gb": 1316.0,
+   "kl": 0.322,
+   "ppl": 1.935
+  },
+  {
+   "variant": "exp_int3g64",
+   "ssd_gb": 1268.0,
+   "kl": 0.059,
+   "ppl": 1.493
+  },
+  {
+   "variant": "exp_int2g64",
+   "ssd_gb": 928.0,
+   "kl": 0.387,
+   "ppl": 2.073
+  },
+  {
+   "variant": "prune_25",
+   "ssd_gb": 1044.0,
+   "kl": 0.053,
+   "ppl": 1.475
+  },
+  {
+   "variant": "prune_50",
+   "ssd_gb": 721.0,
+   "kl": 0.284,
+   "ppl": 1.856
+  },
+  {
+   "variant": "dense_int4g64+exp_int2g64+prune_25",
+   "ssd_gb": 673.0,
+   "kl": 0.59,
+   "ppl": 2.527
+  }
+ ],
+ "pass1": {
+  "layers": 93,
+  "tokens": 16368
+ },
+ "lever_gb": {
+  "prune25_saves": 322,
+  "int4_saves": 43,
+  "best_gb": 673.0,
+  "ref_gb": 1366.0
+ },
+ "plan": [
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "native",
+   "ssd_gb": 510.0,
+   "toks": 0.85
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "lossless",
+   "ssd_gb": 509.0,
+   "toks": 0.94
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d4",
+   "ssd_gb": 505.0,
+   "toks": 1.52
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d4_e2",
+   "ssd_gb": 296.0,
+   "toks": 5.23
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d3_e2_p50",
+   "ssd_gb": 252.0,
+   "toks": 5.47
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 236.0,
+   "toks": 8.85
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "native",
+   "ssd_gb": 756.0,
+   "toks": 0.2
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "lossless",
+   "ssd_gb": 755.0,
+   "toks": 0.2
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d4",
+   "ssd_gb": 747.0,
+   "toks": 0.26
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d4_e2",
+   "ssd_gb": 242.0,
+   "toks": 0.64
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d3_e2_p50",
+   "ssd_gb": 125.0,
+   "toks": 0.8
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 83.0,
+   "toks": 1.14
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "native",
+   "ssd_gb": 1560.0,
+   "toks": 0.05
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "lossless",
+   "ssd_gb": 1364.0,
+   "toks": 0.08
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d4",
+   "ssd_gb": 1321.0,
+   "toks": 0.14
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d4_e2",
+   "ssd_gb": 885.0,
+   "toks": 0.17
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d3_e2_p50",
+   "ssd_gb": 453.0,
+   "toks": 0.21
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 300.0,
+   "toks": 0.24
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "native",
+   "ssd_gb": 853.0,
+   "toks": 0.16
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "lossless",
+   "ssd_gb": 568.0,
+   "toks": 0.26
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d4",
+   "ssd_gb": 559.0,
+   "toks": 0.4
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d4_e2",
+   "ssd_gb": 138.0,
+   "toks": 1.57
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d3_e2_p50",
+   "ssd_gb": 72.0,
+   "toks": 1.76
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 49.0,
+   "toks": 2.78
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "native",
+   "ssd_gb": 806.0,
+   "toks": 0.26
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "lossless",
+   "ssd_gb": 537.0,
+   "toks": 0.45
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d4",
+   "ssd_gb": 530.0,
+   "toks": 0.69
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d4_e2",
+   "ssd_gb": 130.0,
+   "toks": 2.95
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d3_e2_p50",
+   "ssd_gb": 68.0,
+   "toks": 3.04
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 45.0,
+   "toks": 4.85
+  }
+ ],
+ "plan_models": 5,
+ "kimi_plan": {
+  "native_toks": 0.05,
+  "best_toks": 0.24,
+  "best_gb": 300.0
+ },
+ "plan_chart": [
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "native",
+   "toks": 0.85
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d3_e1.6_p50",
+   "toks": 8.85
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "native",
+   "toks": 0.2
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d3_e1.6_p50",
+   "toks": 1.14
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "native",
+   "toks": 0.05
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d3_e1.6_p50",
+   "toks": 0.24
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "native",
+   "toks": 0.16
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d3_e1.6_p50",
+   "toks": 2.78
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "native",
+   "toks": 0.26
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d3_e1.6_p50",
+   "toks": 4.85
+  }
+ ],
+ "plan_ssd": [
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "native",
+   "ssd_gb": 510.0
+  },
+  {
+   "model": "deepseek-v4.1-flash",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 236.0
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "native",
+   "ssd_gb": 756.0
+  },
+  {
+   "model": "glm-5.3",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 83.0
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "native",
+   "ssd_gb": 1560.0
+  },
+  {
+   "model": "kimi-k3.1-pro",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 300.0
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "native",
+   "ssd_gb": 853.0
+  },
+  {
+   "model": "minimax-m3",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 49.0
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "native",
+   "ssd_gb": 806.0
+  },
+  {
+   "model": "qwen3.5-397b-a17b",
+   "recipe": "d3_e1.6_p50",
+   "ssd_gb": 45.0
+  }
+ ]
+}

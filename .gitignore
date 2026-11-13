@@ -10,3 +10,4 @@ vast_api_key
 sw.sh
 *.local.sh
 /logs/
+video/.render/

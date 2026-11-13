@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 416" width="980" height="416" role="img" aria-label="Kimi K3.1 Pro: GB on disk by role">
+<rect width="980" height="416" rx="16" fill="#0b0f17"/>
+<text x="32" y="44" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="22" fill="#e6edf6">Kimi K3.1 Pro: GB on disk by role</text>
+<text x="32" y="68" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14" fill="#8a98ad">from shard headers (HTTP Range), no download</text>
+<text x="270" y="118" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">routed experts</text>
+<rect x="284" y="96" width="546.0" height="30" rx="6" fill="#263044"/>
+<text x="840.0" y="117" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">1,446.5 GB</text>
+<text x="270" y="164" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">attention</text>
+<rect x="284" y="142" width="27.4" height="30" rx="6" fill="#263044"/>
+<text x="321.4" y="163" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">72.7 GB</text>
+<text x="270" y="210" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">shared experts</text>
+<rect x="284" y="188" width="9.2" height="30" rx="6" fill="#263044"/>
+<text x="303.2" y="209" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">24.3 GB</text>
+<text x="270" y="256" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">latent MoE projections</text>
+<rect x="284" y="234" width="3.6" height="30" rx="6" fill="#263044"/>
+<text x="297.6" y="255" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">9.5 GB</text>
+<text x="270" y="302" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">embed + lm_head</text>
+<rect x="284" y="280" width="2.0" height="30" rx="6" fill="#263044"/>
+<text x="296.0" y="301" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">4.7 GB</text>
+<text x="270" y="348" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">router, dense, vision, norms</text>
+<rect x="284" y="326" width="2.0" height="30" rx="6" fill="#263044"/>
+<text x="296.0" y="347" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">3.6 GB</text>
+<text x="948" y="402" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#8a98ad">source: results/derived/readme_data.json · lower is better</text>
+</svg>

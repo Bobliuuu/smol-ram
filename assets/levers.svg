@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 508" width="980" height="508" role="img" aria-label="KL against the unmodified model (nats/token, lower is better)">
+<rect width="980" height="508" rx="16" fill="#0b0f17"/>
+<text x="32" y="44" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-weight="700" font-size="22" fill="#e6edf6">KL against the unmodified model (nats/token, lower is better)</text>
+<text x="32" y="68" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14" fill="#8a98ad">all 93 layers, one H100, 16K eval tokens, naive RTN g64</text>
+<text x="324" y="118" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">ref</text>
+<rect x="338" y="96" width="2.0" height="30" rx="6" fill="#263044"/>
+<text x="350.0" y="117" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.000</text>
+<text x="324" y="164" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">dense_int4g64</text>
+<rect x="338" y="142" width="44.2" height="30" rx="6" fill="#263044"/>
+<text x="392.2" y="163" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.053</text>
+<text x="324" y="210" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">dense_int3g64</text>
+<rect x="338" y="188" width="268.5" height="30" rx="6" fill="#263044"/>
+<text x="616.5" y="209" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.322</text>
+<text x="324" y="256" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">exp_int3g64</text>
+<rect x="338" y="234" width="49.2" height="30" rx="6" fill="#263044"/>
+<text x="397.2" y="255" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.059</text>
+<text x="324" y="302" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">exp_int2g64</text>
+<rect x="338" y="280" width="322.7" height="30" rx="6" fill="#263044"/>
+<text x="670.7" y="301" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.387</text>
+<text x="324" y="348" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">prune_25</text>
+<rect x="338" y="326" width="44.2" height="30" rx="6" fill="#263044"/>
+<text x="392.2" y="347" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.053</text>
+<text x="324" y="394" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">prune_50</text>
+<rect x="338" y="372" width="236.8" height="30" rx="6" fill="#263044"/>
+<text x="584.8" y="393" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.284</text>
+<text x="324" y="440" text-anchor="end" font-family="ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" fill="#8a98ad" font-weight="400">dense_int4g64+exp_int2g64+prune_25</text>
+<rect x="338" y="418" width="492.0" height="30" rx="6" fill="#263044"/>
+<text x="840.0" y="439" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="15" font-weight="700" fill="#e6edf6">0.590</text>
+<text x="948" y="494" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="12" fill="#8a98ad">source: results/derived/readme_data.json · lower is better</text>
+</svg>
